@@ -14,3 +14,7 @@ mysql:
   password: 123456
   username: root
   db: microshop
+sms:
+  username: ""
+  password: ""
+  sendurl: ""

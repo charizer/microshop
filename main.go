@@ -18,5 +18,8 @@ func main() {
 	gin.SetMode(cfg.Mode)
 	g := gin.Default()
 	router.Load(g)
-	_ = g.Run(":" + cfg.HttpPort)
+	err := g.Run(":" + cfg.HttpPort)
+	if err != nil {
+		log.Errorln("start err:", err.Error())
+	}
 }

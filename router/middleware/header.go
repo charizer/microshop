@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"microshop/infrastructure/jwtMgr"
 	"microshop/infrastructure/uid"
 	"net/http"
 	"strconv"
@@ -54,12 +55,24 @@ func StrictTokenHandler() gin.HandlerFunc {
 		traceId, _ := uid.Idg.Next()
 		ctx := context.WithValue(c.Request.Context(), "traceid", strconv.FormatInt(traceId, 10))
 		c.Request = c.Request.WithContext(ctx)
-		authHeader := c.Request.Header.Get("x-nideshop-token")
-		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"errcode": "FC_INVALID_TOKEN", "error": "缺失字段 X-Consumer-Custom-ID", "service": "qbridge"})
+		authHeader := c.Request.Header.Get("X-Nideshop-Token")
+		userId := getUserID(authHeader)
+		if userId == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "C_INVALID_TOKEN", "msg": "缺失字段 X-Nideshop-Token", "data":"缺失字段 X-Nideshop-Token", "service": "microshop"})
 			return
 		}
-		c.Set("userId", authHeader)
+		c.Set("userId", userId)
 		c.Next()
 	}
+}
+
+func getUserID(tokenstr string) string {
+	token := jwtMgr.JwtMgr{}.Parse(tokenstr)
+	if token == nil {
+		return ""
+	}
+	if claims, ok := token.Claims.(*jwtMgr.CustomClaims); ok {
+		return claims.UserID
+	}
+	return ""
 }

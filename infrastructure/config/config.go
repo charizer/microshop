@@ -9,7 +9,7 @@ import (
 // Init read the base file
 func init() {
 	viper.AddConfigPath("./conf")
-	viper.SetConfigName("config")
+	viper.SetConfigName("config-test")
 	viper.SetConfigType("yaml")
 	viper.AutomaticEnv()
 	replacer := strings.NewReplacer(".", "_")
@@ -33,6 +33,9 @@ type Config struct {
 	LogFile      	string
 	LogLevel     	string
 	LogCount 		uint
+	SmsUser 		string
+	SmsPassWord 	string
+	SmsSendUrl 		string
 }
 
 // GetConfig get config
@@ -49,5 +52,8 @@ func GetConfig() *Config {
 		LogFile:      	viper.GetString("logfile"),
 		LogLevel:     	viper.GetString("loglevel"),
 		LogCount:     	viper.GetUint("logcount"),
+		SmsUser: 		viper.GetString("sms.username"),
+		SmsPassWord: 	viper.GetString("sms.password"),
+		SmsSendUrl: 	viper.GetString("sms.sendurl"),
 	}
 }
