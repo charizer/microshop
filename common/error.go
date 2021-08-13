@@ -24,6 +24,7 @@ const (
 	C_ORDER_NOT_EXSIT_ERR
 	S_MYSQL_ERR
 	S_SEND_SMS_ERR
+	S_ALIPAY_REQ_ERR
 )
 
 var errorCode = map[int]string{
@@ -39,6 +40,7 @@ var errorCode = map[int]string{
 	C_ORDER_NOT_EXSIT_ERR:   "C_ORDER_NOT_EXSIT_ERR",
 	S_MYSQL_ERR:             "S_MYSQL_ERR",
 	S_SEND_SMS_ERR:          "S_SEND_SMS_ERR",
+	S_ALIPAY_REQ_ERR:		"S_ALIPAY_REQ_ERR",
 }
 
 var errorText = map[int]string{
@@ -54,6 +56,7 @@ var errorText = map[int]string{
 	C_ORDER_NOT_EXSIT_ERR:   "订单不存在",
 	S_MYSQL_ERR:             "mysql错误",
 	S_SEND_SMS_ERR:          "短信发送失败",
+	S_ALIPAY_REQ_ERR: "支付请求失败",
 }
 
 func ErrorCode(code int) string {

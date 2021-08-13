@@ -38,6 +38,8 @@ func Load(g *gin.Engine) *gin.Engine {
 		authGroup.GET("order/list", application.OrderList)
 		authGroup.GET("order/detail", application.OrderDetail)
 		authGroup.POST("order/updatestatus", application.OrderStatusUpdate)
+
+
 	}
 	noAuthGroup := g.Group("/api")
 	{
@@ -48,6 +50,8 @@ func Load(g *gin.Engine) *gin.Engine {
 		noAuthGroup.GET("goods/detail", application.GoodsDetail)
 		noAuthGroup.POST("sms/send", application.SendSms)
 		noAuthGroup.POST("auth/loginByWeixin", application.Login)
+		noAuthGroup.POST("alipay/pay", application.Pay)
+		noAuthGroup.POST("alipay/notify_url", application.PayNotify)
 	}
 	return g
 }
