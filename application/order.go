@@ -30,29 +30,15 @@ func OrderSubmit(c *gin.Context) {
 		return
 	}
 	if req.GoodsId != 0 {
-		submitQuick(c, *addr, req.GoodsId, req.Number, req.ProductId, userId)
+		submitQuick(c, *addr, req.GoodsId, req.Number, userId)
 	} else {
 		submitNormal(c, *addr, userId)
 	}
 }
 
-func submitQuick(c *gin.Context, address entity.Address, goodsId, number, productId, userId int) {
+func submitQuick(c *gin.Context, address entity.Address, goodsId, number, userId int) {
 	ctx := c.Request.Context()
 	errMsg := ""
-	product, err := service.NewGoodsService().GetGoodsProduct(ctx, map[string]interface{}{
-		"goods_id": goodsId,
-		"id":       productId,
-	})
-	if err != nil {
-		errMsg = fmt.Sprintf("submit quick get goods:%d product:%d err:%s", goodsId, productId, err.Error())
-		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
-		return
-	}
-	if product == nil || product.GoodsNumber < number {
-		errMsg = fmt.Sprintf("submit quick goods:%d product:%d not exsit", goodsId, productId)
-		common.HandleError(c, http.StatusBadRequest, common.C_PRODUCT_NOT_EXSIT_ERR, errMsg)
-		return
-	}
 	goods, err := service.NewGoodsService().GetGoods(ctx, goodsId)
 	if err != nil {
 		errMsg = fmt.Sprintf("get goods:%d detail err:%s", goodsId, err.Error())
@@ -66,7 +52,7 @@ func submitQuick(c *gin.Context, address entity.Address, goodsId, number, produc
 	}
 	var freightPrice float64 = 0
 	var goodstotalprice float64 = 0
-	goodstotalprice += float64(number) * product.RetailPrice
+	goodstotalprice += float64(number) * goods.RetailPrice
 	ordertotalprice := goodstotalprice + freightPrice
 	actualprice := ordertotalprice - 0
 	now := time.Now().UnixNano() / 1e6
@@ -95,10 +81,9 @@ func submitQuick(c *gin.Context, address entity.Address, goodsId, number, produc
 	orderGoods := entity.OrderGoods{
 		OrderId:     orderId,
 		GoodsId:     goods.Id,
-		ProductId:   productId,
 		GoodsName:   goods.Name,
 		ListPicUrl:  goods.ListPicUrl,
-		RetailPrice: product.RetailPrice,
+		RetailPrice: goods.RetailPrice,
 		Number:      number,
 		GoodsBrief:  goods.GoodsBrief,
 		CreateTime:  now,
@@ -165,7 +150,6 @@ func submitNormal(c *gin.Context, address entity.Address, userId int) {
 		orderGoods := entity.OrderGoods{
 			OrderId:    orderId,
 			GoodsId:    item.GoodsId,
-			ProductId:  item.ProductId,
 			GoodsName:  item.GoodsName,
 			ListPicUrl: item.ListPicUrl,
 			RetailPrice: item.RetailPrice,

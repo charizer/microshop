@@ -21,12 +21,13 @@ type Goods struct {
 }
 
 type SampleGoods struct {
-	Id          int     `json:"id"`
-	CategoryId  int     `json:"category_id"`
-	ListPicUrl  string  `json:"list_pic_url"`
-	Name        string  `json:"name"`
-	RetailPrice float64 `json:"retail_price"`
-	GoodsBrief  string  `json:"goods_brief"`
+	Id            int     `json:"id"`
+	CategoryId    int     `json:"category_id"`
+	ListPicUrl    string  `json:"list_pic_url"`
+	Name          string  `json:"name"`
+	RetailPrice   float64 `json:"retail_price"`
+	GoodsBrief    string  `json:"goods_brief"`
+	PrimaryPicUrl string  `json:"primary_pic_url"`
 }
 
 type GoodsGallery struct {

@@ -58,3 +58,13 @@ func (o CartRepo) Delete(ctx context.Context, filter map[string]interface{}) err
 	var result interface{}
 	return mysql.DB.Table(impl.CART_T_NAME).Where(where, values...).Delete(result).Error
 }
+
+func (o CartRepo) Count(ctx context.Context, filter map[string]interface{}) (int64, error) {
+	where, values, _ := mysql.SQLBuilder(filter)
+	var result interface{}
+	err := mysql.DB.Table(impl.CART_T_NAME).Where(where, values...).Count(result).Error
+	if err != nil {
+		return 0, err
+	}
+	return result.(int64), err
+}

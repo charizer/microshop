@@ -32,14 +32,15 @@ func Load(g *gin.Engine) *gin.Engine {
 		authGroup.POST("cart/delete", application.CartDelete)
 		authGroup.POST("cart/checked", application.CartChecked)
 		authGroup.GET("cart/checkout", application.CartCheckout)
+		authGroup.GET("cart/usercartcount", application.UserCartCount)
 
 		// order
 		authGroup.POST("order/submit", application.OrderSubmit)
 		authGroup.GET("order/list", application.OrderList)
 		authGroup.GET("order/detail", application.OrderDetail)
 		authGroup.POST("order/updatestatus", application.OrderStatusUpdate)
-
-
+		// user pay
+		authGroup.POST("alipay/pay", application.Pay)
 	}
 	noAuthGroup := g.Group("/api")
 	{
@@ -50,7 +51,6 @@ func Load(g *gin.Engine) *gin.Engine {
 		noAuthGroup.GET("goods/detail", application.GoodsDetail)
 		noAuthGroup.POST("sms/send", application.SendSms)
 		noAuthGroup.POST("auth/loginByWeixin", application.Login)
-		noAuthGroup.POST("alipay/pay", application.Pay)
 		noAuthGroup.POST("alipay/notify_url", application.PayNotify)
 	}
 	return g

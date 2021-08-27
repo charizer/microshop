@@ -13,7 +13,7 @@ import (
 func Home(c *gin.Context) {
 	ctx := c.Request.Context()
 	errMsg := ""
-	banners, err := service.NewBannerService().List(ctx, 0, 3)
+	banners, err := service.NewGoodsService().BannerGoods(ctx, 0, 3)
 	if err != nil {
 		errMsg = fmt.Sprintf("list banner err:%s", err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)

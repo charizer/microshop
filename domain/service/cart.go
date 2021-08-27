@@ -40,3 +40,7 @@ func (o CartService) UpdateCart(ctx context.Context, where, update map[string]in
 func (o CartService) DeleteCart(ctx context.Context, where map[string]interface{}) error {
 	return o.CartRepo.Delete(ctx, where)
 }
+
+func (o CartService) CountCart(ctx context.Context, where map[string]interface{}) (int64, error){
+	return o.CartRepo.Count(ctx, where)
+}

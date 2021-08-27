@@ -56,49 +56,33 @@ func CartAdd(c *gin.Context) {
 		common.HandleError(c, http.StatusBadRequest, common.C_GOODS_NOT_EXSIT_ERR, errMsg)
 		return
 	}
-	product, err := service.NewGoodsService().GetGoodsProduct(ctx, map[string]interface{}{
-		"goods_id": req.GoodsId,
-		"id":       req.ProductId,
-	})
-	if err != nil {
-		errMsg = fmt.Sprintf("get goods:%d product:%d err:%s", req.GoodsId, req.ProductId, err.Error())
-		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
-		return
-	}
-	if product == nil || product.GoodsNumber < req.Number {
-		errMsg = fmt.Sprintf("get goods:%d product:%d not exsit", req.GoodsId, req.ProductId)
-		common.HandleError(c, http.StatusBadRequest, common.C_PRODUCT_NOT_EXSIT_ERR, errMsg)
-		return
-	}
 	cart, err := service.NewCartService().GetCart(ctx, map[string]interface{}{
 		"user_id":    userId,
 		"goods_id":   goods.Id,
-		"product_id": product.Id,
 	})
 	if err != nil {
-		errMsg = fmt.Sprintf("get goods:%d product:%d cart err:%s", req.GoodsId, req.ProductId, err.Error())
+		errMsg = fmt.Sprintf("get goods:%d cart err:%s", req.GoodsId, err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 		return
 	}
 	if cart == nil {
-		insertCart(c, *goods, *product, req.Number, userId)
+		insertCart(c, *goods, req.Number, userId)
 	} else {
-		updateCart(c, *goods, *product, *cart, req.Number, userId)
+		updateCart(c, *goods, *cart, req.Number, userId)
 	}
 }
 
-func insertCart(c *gin.Context, goods entity.Goods, product entity.GoodsProduct, number, userId int) {
+func insertCart(c *gin.Context, goods entity.Goods, number, userId int) {
 	ctx := c.Request.Context()
 	errMsg := ""
 	now := time.Now().UnixNano() / 1e6
 	cart := entity.Cart{
 		GoodsId:     goods.Id,
-		ProductId:   product.Id,
 		GoodsName:   goods.Name,
 		ListPicUrl:  goods.ListPicUrl,
 		Number:      number,
 		UserId:      userId,
-		RetailPrice: product.RetailPrice,
+		RetailPrice: goods.RetailPrice,
 		Checked:     1,
 		GoodsBrief:  goods.GoodsBrief,
 		CreateTime:  now,
@@ -106,22 +90,17 @@ func insertCart(c *gin.Context, goods entity.Goods, product entity.GoodsProduct,
 	}
 	_, err := service.NewCartService().AddCart(ctx, cart)
 	if err != nil {
-		errMsg = fmt.Sprintf("add cart goods:%d product:%d err:%s", goods.Id, product.Id, err.Error())
+		errMsg = fmt.Sprintf("add cart goods:%d err:%s", goods.Id, err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 	} else {
 		common.HandleSucc(c, http.StatusOK, "", gin.H{})
 	}
 }
 
-func updateCart(c *gin.Context, goods entity.Goods, product entity.GoodsProduct, cart entity.Cart, number, userId int) {
+func updateCart(c *gin.Context, goods entity.Goods, cart entity.Cart, number, userId int) {
 	ctx := c.Request.Context()
 	errMsg := ""
 	now := time.Now().UnixNano() / 1e6
-	if product.GoodsNumber < (number + cart.Number) {
-		errMsg = fmt.Sprintf("update cart:%d goods:%d product:%d number less", cart.Id, goods.Id, product.Id)
-		common.HandleError(c, http.StatusBadRequest, common.C_PRODUCT_NOT_EXSIT_ERR, errMsg)
-		return
-	}
 	err := service.NewCartService().UpdateCart(ctx, map[string]interface{}{
 		"id": cart.Id,
 	}, map[string]interface{}{
@@ -129,7 +108,7 @@ func updateCart(c *gin.Context, goods entity.Goods, product entity.GoodsProduct,
 		"update_time": now,
 	})
 	if err != nil {
-		errMsg = fmt.Sprintf("update cart:%d goods:%d product:%d err:%s", cart.Id, goods.Id, product.Id, err.Error())
+		errMsg = fmt.Sprintf("update cart:%d goods:%d err:%s", cart.Id, goods.Id, err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 	} else {
 		common.HandleSucc(c, http.StatusOK, "", gin.H{})
@@ -142,19 +121,17 @@ func CartCount(c *gin.Context) {
 	userIdStr := c.GetString("userId")
 	userId := utils.String2Int(userIdStr)
 	goodsId := utils.GetIntParam(c, "goodsId")
-	productId := utils.GetIntParam(c, "productId")
-	if goodsId == -1 || productId == -1 {
+	if goodsId == -1 {
 		errMsg = fmt.Sprintf("get cart count param err")
 		common.HandleError(c, http.StatusBadRequest, common.C_REQ_PARAM_ERR, errMsg)
 		return
 	}
 	cart, err := service.NewCartService().GetCart(ctx, map[string]interface{}{
 		"goods_id":   goodsId,
-		"product_id": productId,
 		"user_id":    userId,
 	})
 	if err != nil {
-		errMsg = fmt.Sprintf("get cart count goods:%d product:%d err:%s", goodsId, productId, err.Error())
+		errMsg = fmt.Sprintf("get cart count goods:%d err:%s", goodsId, err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 		return
 	}
@@ -184,14 +161,6 @@ func CartUpdate(c *gin.Context) {
 		common.HandleError(c, http.StatusBadRequest, common.C_CART_NOT_EXSIT_ERR, errMsg)
 		return
 	}
-	product, err := service.NewGoodsService().GetGoodsProduct(ctx, map[string]interface{}{
-		"id":       req.ProductId,
-	})
-	if product == nil || product.GoodsNumber < req.Number {
-		errMsg = fmt.Sprintf("update cart before get goods:%d product:%d not exsit", req.GoodsId, req.ProductId)
-		common.HandleError(c, http.StatusBadRequest, common.C_PRODUCT_NOT_EXSIT_ERR, errMsg)
-		return
-	}
 	err = service.NewCartService().UpdateCart(ctx, map[string]interface{}{
 		"id": req.Id,
 	}, map[string]interface{}{
@@ -199,7 +168,7 @@ func CartUpdate(c *gin.Context) {
 		"update_time": now,
 	})
 	if err != nil {
-		errMsg = fmt.Sprintf("update cart:%d goods:%d product:%d err:%s", cart.Id, req.GoodsId, product.Id, err.Error())
+		errMsg = fmt.Sprintf("update cart:%d goods:%d err:%s", cart.Id, req.GoodsId,  err.Error())
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 	} else {
 		common.HandleSucc(c, http.StatusOK, "", gin.H{})
@@ -237,6 +206,21 @@ func CartChecked(c *gin.Context) {
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 	} else {
 		common.HandleSucc(c, http.StatusOK, "", gin.H{})
+	}
+}
+
+func UserCartCount(c *gin.Context) {
+	ctx := c.Request.Context()
+	errMsg := ""
+	userIdStr := c.GetString("userId")
+	userId := utils.String2Int(userIdStr)
+	count, err := service.NewCartService().CountCart(ctx, map[string]interface{}{
+		"userId": userId,})
+	if err != nil {
+		errMsg = fmt.Sprintf("count cart err:%s", err.Error())
+		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
+	}else{
+		common.HandleSucc(c, http.StatusOK, "", gin.H{"count": count})
 	}
 }
 

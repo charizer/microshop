@@ -62,12 +62,6 @@ func GoodsDetail(c *gin.Context){
 		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
 		return
 	}
-	products, err := service.NewGoodsService().GetGoodsProducts(ctx, id)
-	if err != nil {
-		errMsg = fmt.Sprintf("get goods:%d products err:%s", id, err.Error())
-		common.HandleError(c, http.StatusInternalServerError, common.S_MYSQL_ERR, errMsg)
-		return
-	}
 	galleries, imageText := []entity.GoodsGallery{}, []entity.GoodsGallery{}
 	for _, item := range gallerys {
 		if item.ImgType == 1 {
@@ -80,7 +74,6 @@ func GoodsDetail(c *gin.Context){
 		Goods: *goods,
 		Galleries: galleries,
 		Attribute: attrs,
-		ProductList: products,
 		ImageText: imageText,
 	})
 }

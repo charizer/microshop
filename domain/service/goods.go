@@ -24,13 +24,19 @@ func (o GoodsService) List(ctx context.Context, page, size int, filter map[strin
 
 func (o GoodsService) HotGoods(ctx context.Context, page, size int) ([]entity.SampleGoods, error){
 	filter := make(map[string]interface{})
-	filter["is_hot"] = 1
+	filter["goods_type"] = 2
 	return o.GoodsRepo.List(ctx, page, size, filter)
 }
 
 func (o GoodsService) NewGoods(ctx context.Context, page, size int) ([]entity.SampleGoods, error){
 	filter := make(map[string]interface{})
-	filter["is_new"] = 1
+	filter["goods_type"] = 1
+	return o.GoodsRepo.List(ctx, page, size, filter)
+}
+
+func (o GoodsService) BannerGoods(ctx context.Context, page, size int) ([]entity.SampleGoods, error){
+	filter := make(map[string]interface{})
+	filter["goods_type"] = 3
 	return o.GoodsRepo.List(ctx, page, size, filter)
 }
 

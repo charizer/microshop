@@ -12,4 +12,5 @@ type CartRepo interface {
 	Insert(ctx context.Context, cart entity.Cart) (int, error)
 	Update(ctx context.Context, filter, update map[string]interface{}) error
 	Delete(ctx context.Context, filter map[string]interface{}) error
+	Count(ctx context.Context, filter map[string]interface{}) (int64, error)
 }

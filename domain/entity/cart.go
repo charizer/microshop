@@ -7,7 +7,6 @@ type Cart struct {
 	Id          int     `json:"id"`
 	ListPicUrl  string  `json:"list_pic_url"`
 	Number      int     `json:"number"`
-	ProductId   int     `json:"product_id"`
 	RetailPrice float64 `json:"retail_price"`
 	UserId      int     `json:"user_id"`
 	GoodsBrief  string  `json:"goods_brief"`
@@ -17,7 +16,6 @@ type Cart struct {
 
 type CartAddReq struct {
 	GoodsId   int `json:"goodsId"`
-	ProductId int `json:"productId"`
 	Number    int `json:"number"`
 }
 
@@ -35,7 +33,6 @@ type CartListResponse struct {
 
 type CartUpdateReq struct {
 	GoodsId   int `json:"goodsId"`
-	ProductId int `json:"productId"`
 	Number    int `json:"number"`
 	Id        int `json:"id"`
 }

@@ -1,0 +1,1 @@
+alter table category add column cat_level int(11) unsigned NOT NULL DEFAULT '1' COMMENT '层次';

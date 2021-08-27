@@ -14,7 +14,6 @@ type SubmitOrderReq struct {
 	AddressId int `json:"addressId"`
 	GoodsId   int `json:"goodsId"`
 	Number    int `json:"number"`
-	ProductId int `json:"productId"`
 }
 
 type Order struct {
@@ -48,7 +47,6 @@ type OrderGoods struct {
 	ListPicUrl  string  `json:"list_pic_url"`
 	Number      int     `json:"number"`
 	OrderId     int     `json:"order_id"`
-	ProductId   int     `json:"product_id"`
 	RetailPrice float64 `json:"retail_price"`
 	GoodsBrief  string  `json:"goods_brief"`
 	CreateTime  int64   `json:"create_time"`

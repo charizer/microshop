@@ -210,7 +210,6 @@ CREATE TABLE `cart` (
  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品ID',
- `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '产品ID',
  `goods_name` varchar(120) NOT NULL DEFAULT '' COMMENT '商品名称',
  `retail_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品价格',
  `number` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '商品数量',
@@ -221,7 +220,7 @@ CREATE TABLE `cart` (
  `update_time` bigint(16) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
  PRIMARY KEY (`id`),
  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000000 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4;
 
 
 -- ----------------------------
@@ -268,7 +267,6 @@ CREATE TABLE `order_goods` (
     `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品ID',
     `goods_name` varchar(120) NOT NULL DEFAULT '' COMMENT '商品名称',
     `goods_brief` varchar(255) NOT NULL DEFAULT '' COMMENT '商品简介',
-    `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '产品ID',
     `number` smallint(5) unsigned NOT NULL DEFAULT '1' COMMENT '数量',
     `retail_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '单价',
     `list_pic_url` varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
@@ -277,4 +275,4 @@ CREATE TABLE `order_goods` (
     PRIMARY KEY (`id`),
     KEY `order_id` (`order_id`),
     KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000000 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4;

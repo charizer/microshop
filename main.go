@@ -21,5 +21,7 @@ func main() {
 	err := g.Run(":" + cfg.HttpPort)
 	if err != nil {
 		log.Errorln("start err:", err.Error())
+	}else{
+		log.Infof("server start at port:", cfg.HttpPort)
 	}
 }

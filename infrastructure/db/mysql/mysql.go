@@ -32,6 +32,7 @@ func StartUp() {
 	DB.DB().SetMaxIdleConns(2)
 	DB.DB().SetMaxOpenConns(20)
 	DB.SingularTable(true)
+	log.Infof("mysql start ok")
 }
 
 func SQLBuilder(where map[string]interface{}) (whereSql string,
